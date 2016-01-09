@@ -12,15 +12,17 @@ document.addEventListener('DOMContentLoaded', function() {
 	var sprites = [];
 	var viewport = document.getElementById('viewport');
 	const spriteWidth = 35;  //the actual width of the fruit sprites											
+	const sheetSize = {'width':128, 'height':96}
 	//the scaling factor for the fruits: viewwidth*desired percentage/spriteWidth
-	const spriteScale = viewport.offsetWidth * .15 / spriteWidth; 
+	const spriteScale = viewport.offsetWidth * .10 / spriteWidth; 
 
 	function skinSprite(skinName) {
 		if (!this) { console.log('this error - switchSprite'); return;}
 		this.style.backgroundPosition = (spriteSheet[skinName][0] * spriteScale) + 'px ' +
 			(spriteSheet[skinName][1] * spriteScale) + 'px ';
-		this.style.width = (spriteSheet[skinName][2] * spriteScale) + 'px ';
-		this.style.height = (spriteSheet[skinName][3] * spriteScale) + 'px ';
+		this.style['background-size'] = sheetSize.width * spriteScale + 'px ' + sheetSize.height * spriteScale + 'px';
+		this.style.width = (spriteWidth * spriteScale) + 'px ';
+		this.style.height = (spriteWidth * spriteScale) + 'px ';
 	}
 
 	function destroySprite() {
@@ -56,15 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 
 	function test() {
-		sprites.push(new Sprite('apple', 50, 50));
-		sprites.push(new Sprite('banana', 150, 150));
-		sprites.push(new Sprite('pear', 350, 50));
-		sprites.push(new Sprite('strawberry', 50, 10));
-		sprites.push(new Sprite('grape', 90, 50));
-		sprites.push(new Sprite('peach', 50, 90));
-		sprites.push(new Sprite('pineapple', 80, 80));
 		sprites.push(new Sprite('lemon', 250, 250));
-		sprites.push(new Sprite('cherry', 25, 25));
 
 	}
 
