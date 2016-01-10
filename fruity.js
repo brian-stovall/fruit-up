@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
 												'pineapple':[0, -64, 32, 32]};
 	var sprites = [];
 	var viewport = document.getElementById('viewport');
-	const spriteWidth = 35;  //the actual width of the fruit sprites											
+	const spriteWidth = 32;  //the actual width of the fruit sprites											
 	const sheetSize = {'width':128, 'height':96}
 	//the scaling factor for the fruits: viewwidth*desired percentage/spriteWidth
 	const spriteScale = viewport.offsetWidth * .10 / spriteWidth; 
@@ -39,12 +39,23 @@ document.addEventListener('DOMContentLoaded', function() {
 		this.style.top = this.yPos + 'px';
 		this.parent.appendChild(this.element);
 	}
+	// causes a sprite to move according to it's dx and dy
+	function update() {
+		if (!this) { console.log('this error - update'); return;}
+		console.log('update called');
+		if (this.dx || this.dy ) {
+			this.xPos += this.dx;
+			this.yPos += this.dy;
+			this.blit();
+		}
+	}
 
 	//sprites will have a xPos, yPos, dx, dy?
 	function Sprite(name, x, y) {
 		this.blit = blitSprite;
 		this.skin = skinSprite;
 		this.destroy = destroySprite;
+		this.update = update;
 		this.parent = viewport;
 		this.element = document.createElement('div');
 		this.element.className = 'sprite';
@@ -56,10 +67,19 @@ document.addEventListener('DOMContentLoaded', function() {
 		this.skin(name);
 		this.blit();
 	}
+	
+	function animate() {
+		window.requestAnimationFrame(animate);
+		for (var i = 0; i < sprites.length; i++)
+			sprites[i].update();
+	}
 
 	function test() {
-		sprites.push(new Sprite('lemon', 250, 250));
-
+		sprites.push(new Sprite('cherry', 250, 450));
+		sprites.push(new Sprite('pear', 380, 450));
+		sprites[0].dy = -3.2;
+		sprites[1].dy = -3;
+		animate();
 	}
 
 	test();
