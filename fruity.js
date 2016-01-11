@@ -40,13 +40,27 @@ document.addEventListener('DOMContentLoaded', function() {
 		this.parent.appendChild(this.element);
 	}
 	// causes a sprite to move according to it's dx and dy
-	function update(gravity) {
+	function update(gravity, drag) {
 		if (!this) { console.log('this error - update'); return;}
-		console.log('update called');
+		//console.log('update called');
+		var dt = viewport.getDt();
 		if (gravity || this.dx || this.dy ) {
-			this.xPos += this.dx;
-			this.yPos += (this.dy + gravity);
-			console.log(this.yPos);
+			drag = drag * (this.dt > 0) ? 1 : -1;
+			this.dx += drag; 
+			this.xPos += this.dx * dt;
+			this.yPos += (this.dy + gravity) * dt;
+			//console.log(this.yPos);
+		}
+	}
+
+	//returns elapsed time in seconds since last call to calcDt
+	function calcDt() {
+		var lastTime = (Date.now());
+		//use a closure to store lastTime
+		return function () {
+			result = (Date.now() - lastTime) / 1000;
+			lastTime = Date.now();
+			return result;
 		}
 	}
 
@@ -68,15 +82,16 @@ document.addEventListener('DOMContentLoaded', function() {
 		this.blit();
 	}
 	
-	function animate(gravity) {
+	function animate(gravity, drag) {
 		var dieList = [];
 		if (sprites.length){
-			console.log(sprites.length + ' sprites.length');
+			//console.log(sprites.length + ' sprites.length');
 			window.requestAnimationFrame(animate);
 			for (var i = 0; i < sprites.length; i++) {
-				sprites[i].update(gravity);
+				sprites[i].update(gravity, drag);
+				sprites[i].blit();
 				if (sprites[i].yPos >= viewport.offsetHeight){
-					console.log(sprites[i].name + ' offscreen!');
+					//console.log(sprites[i].name + ' offscreen!');
 					sprites[i].destroy();
 					dieList.push(i);
 				}
@@ -89,12 +104,14 @@ document.addEventListener('DOMContentLoaded', function() {
 	function test() {
 		//this is where the blender is
 		var blenderMouth = [.48 * viewport.offsetWidth, .55 * viewport.offsetHeight];
-		var gravity = .1; //gravity in pixels
+		var gravity = .1; //gravity in pixels/s - FIX this should be a %screen /s and get scaled!
+		var drag = .1; //left-right drag in pixels/s - FIX this should be a %screen /s and get scaled!
 		//sprites.push(new Sprite('cherry', blenderMouth[0], blenderMouth[1]));
 		sprites.push(new Sprite('pear', 380, 0));
-		sprites[0].dy = -.2;
-		//sprites[1].dy = -3;
-		animate(gravity);
+		sprites[0].dx = 2;
+		//start our timer
+		viewport.getDt = calcDt();
+		animate(gravity, drag);
 	}
 
 	
