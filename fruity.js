@@ -1,14 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
 	//spriteSheet entries have the form [startX, startY, width, height]
-	const spriteSheet = { 'strawberry': [0, 0, 32, 32],
-												'apple': [-32, 0, 32, 32],
-												'banana': [-64, 0, 32, 32],
-												'pear': [-96, 0, 32, 32],
-												'cherry':[0, -32, 32, 32], 
-												'lemon':[-32, -32, 32, 32], 
-												'peach':[-64, -32, 32, 32], 
-												'grape':[-96, -32, 32, 32], 
-												'pineapple':[0, -64, 32, 32]};
+	const spriteSheet = { 'strawberry': [0, 0],
+												'apple': [-32, 0],
+												'banana': [-64, 0],
+												'pear': [-96, 0],
+												'cherry':[0, -32], 
+												'lemon':[-32, -32], 
+												'peach':[-64, -32], 
+												'grape':[-96, -32], 
+												'pineapple':[0, -64]};
 	var sprites = [];
 	var viewport = document.getElementById('viewport');
 	const spriteWidth = 32;  //the actual width of the fruit sprites											
@@ -75,12 +75,15 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 
 	function test() {
-		sprites.push(new Sprite('cherry', 250, 450));
-		sprites.push(new Sprite('pear', 380, 450));
-		sprites[0].dy = -3.2;
-		sprites[1].dy = -3;
+		//this is where the blender is
+		var blenderMouth = [.48 * viewport.offsetWidth, .55 * viewport.offsetHeight];
+		sprites.push(new Sprite('cherry', blenderMouth[0], blenderMouth[1]));
+		//sprites.push(new Sprite('pear', 380, 450));
+		//sprites[0].dy = -3.2;
+		//sprites[1].dy = -3;
 		animate();
 	}
 
+	
 	test();
 });
