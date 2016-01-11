@@ -40,13 +40,13 @@ document.addEventListener('DOMContentLoaded', function() {
 		this.parent.appendChild(this.element);
 	}
 	// causes a sprite to move according to it's dx and dy
-	function update() {
+	function update(gravity) {
 		if (!this) { console.log('this error - update'); return;}
 		console.log('update called');
-		if (this.dx || this.dy ) {
+		if (gravity || this.dx || this.dy ) {
 			this.xPos += this.dx;
-			this.yPos += this.dy;
-			this.blit();
+			this.yPos += (this.dy + gravity);
+			console.log(this.yPos);
 		}
 	}
 
@@ -68,20 +68,33 @@ document.addEventListener('DOMContentLoaded', function() {
 		this.blit();
 	}
 	
-	function animate() {
-		window.requestAnimationFrame(animate);
-		for (var i = 0; i < sprites.length; i++)
-			sprites[i].update();
+	function animate(gravity) {
+		var dieList = [];
+		if (sprites.length){
+			console.log(sprites.length + ' sprites.length');
+			window.requestAnimationFrame(animate);
+			for (var i = 0; i < sprites.length; i++) {
+				sprites[i].update(gravity);
+				if (sprites[i].yPos >= viewport.offsetHeight){
+					console.log(sprites[i].name + ' offscreen!');
+					sprites[i].destroy();
+					dieList.push(i);
+				}
+			}
+		}
+		for (var n = 0; n < dieList.length; n++)
+			sprites.splice(dieList[n], 1);
 	}
 
 	function test() {
 		//this is where the blender is
 		var blenderMouth = [.48 * viewport.offsetWidth, .55 * viewport.offsetHeight];
-		sprites.push(new Sprite('cherry', blenderMouth[0], blenderMouth[1]));
-		//sprites.push(new Sprite('pear', 380, 450));
-		//sprites[0].dy = -3.2;
+		var gravity = .1; //gravity in pixels
+		//sprites.push(new Sprite('cherry', blenderMouth[0], blenderMouth[1]));
+		sprites.push(new Sprite('pear', 380, 0));
+		sprites[0].dy = -.2;
 		//sprites[1].dy = -3;
-		animate();
+		animate(gravity);
 	}
 
 	
