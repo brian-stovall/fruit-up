@@ -17,13 +17,13 @@ document.addEventListener('DOMContentLoaded', function() {
 	var heightPct = pctToPx.bind(undefined, viewport.offsetHeight);
 
 	const blenderMouth = [widthPct(.48), heightPct(.55)];
-	const gravity = heightPct(.10); //additive gravity in pixels/s - FIX should have a 'terminal velocity'?
+	const gravity = 0;//heightPct(.10); //additive gravity in %vh/s 
 	const drag = 0; //left-right drag coefficient, mutates dx per sec ie .75, dx loses 1/4 speed/sec
 	const spriteWidth = 32;  //the actual width of the fruit sprites											
 	const sheetSize = {'width':128, 'height':96}
 	//the scaling factor for the fruits: viewwidth*desired percentage/spriteWidth
 	const spriteScale = widthPct(.1) / spriteWidth; 
-	const TERMINAL_VELOCITY = 300; 
+	const TERMINAL_VELOCITY = 0;//300; 
 
 	function skinSprite(skinName) {
 		if (!this) { console.log('this error - switchSprite'); return;}
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			if (this.dy > TERMINAL_VELOCITY) this.dy = TERMINAL_VELOCITY;
 			this.xPos += this.dx * dt;
 			this.yPos += this.dy * dt;
-			//console.log(this.yPos, this.dy, gravity);
+			console.log(this.yPos, this.dy, gravity);
 		}
 	}
 
@@ -88,7 +88,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		this.dx = 0;
 		this.dy = 0;
 		this.skin(name);
-		this.blit();
 	}
 	
 	function animate(gravity, drag) {
@@ -125,6 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	//throws out n random fruits within a random range
 	function throwFruit(n) {
 		var name, up, out; //holders for the random initializers
+		var curSprite; //holder for the current Sprite
 		for (var i = 0; i < n; i++) {
 			//console.log(randRange(fruitNames.length - 1));
 			name = fruitNames[randRange(fruitNames.length - 1)];
@@ -132,9 +132,11 @@ document.addEventListener('DOMContentLoaded', function() {
 			out = randRange(widthPct(.7));
 			out *= (randRange(1)) ? 1 : -1;
 			console.log('up :' + up + ' out:' + out);
-			sprites.push(new Sprite(name, blenderMouth[0], blenderMouth[1]));
-			sprites[sprites.length - 1].dx = out;
-			sprites[sprites.length - 1].dy = up;
+			curSprite = new Sprite(name, blenderMouth[0], blenderMouth[1]);
+			curSprite.dx = out;
+			curSprite.dy = up;
+			sprites.push(curSprite);
+			//console.log(sprites[sprites.length - 1].dx);
 		}
 	}
 
