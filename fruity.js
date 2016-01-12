@@ -120,8 +120,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		var curSprite; //holder for the current Sprite
 		for (var i = 0; i < n; i++) {
 			name = fruitNames[randRange(fruitNames.length - 1)];
-			up = -randRange(heightPct(2.5), heightPct(1.7));
-			out = randRange(widthPct(.5));
+			up = -randRange(heightPct(2), heightPct(1.7));
+			out = randRange(widthPct(.45));
 			out *= (randRange(1)) ? 1 : -1;
 			//console.log('up :' + up + ' out:' + out);
 			curSprite = new Sprite(name, blenderMouth[0], blenderMouth[1]);
@@ -131,8 +131,16 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	}
 
+	//makes randomized setTimeout calls to throwFruit
+	function fruitFountain() {
+		console.log(sprites.length);
+		throwFruit(randRange(5,1));
+		window.setTimeout(fruitFountain, randRange(800, 100));
+	}
+
+
 	function test() {
-		throwFruit(5);
+		fruitFountain();
 		//start our timer
 		viewport.getDt = calcDt();
 		animate();
