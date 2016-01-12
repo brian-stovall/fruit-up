@@ -17,13 +17,13 @@ document.addEventListener('DOMContentLoaded', function() {
 	var heightPct = pctToPx.bind(undefined, viewport.offsetHeight);
 
 	const blenderMouth = [widthPct(.48), heightPct(.55)];
-	const gravity = 0;//heightPct(.10); //additive gravity in %vh/s 
-	const drag = 0; //left-right drag coefficient, mutates dx per sec ie .75, dx loses 1/4 speed/sec
+	const gravity = heightPct(.09); //additive gravity in %vh/s 
+	const drag = 1; //left-right drag coefficient, mutates dx per sec ie .75, dx loses 1/4 speed/sec
 	const spriteWidth = 32;  //the actual width of the fruit sprites											
 	const sheetSize = {'width':128, 'height':96}
 	//the scaling factor for the fruits: viewwidth*desired percentage/spriteWidth
 	const spriteScale = widthPct(.1) / spriteWidth; 
-	const TERMINAL_VELOCITY = 0;//300; 
+	const TERMINAL_VELOCITY = heightPct(.75); 
 
 	function skinSprite(skinName) {
 		if (!this) { console.log('this error - switchSprite'); return;}
@@ -39,27 +39,21 @@ document.addEventListener('DOMContentLoaded', function() {
 		this.parent.removeChild(this.element);
 	}
 
-	//x and y arguments are optional
-	function blitSprite(x, y) {
+	function blitSprite() {
 		if (!this) { console.log('this error - blitSprite'); return;}
-		if (x) this.xPos = x;
-		if (y) this.yPos = y;
 		this.style.left = this.xPos + 'px';
 		this.style.top = this.yPos + 'px';
 		this.parent.appendChild(this.element);
 	}
 	// causes a sprite to move according to it's dx and dy
-	function update(gravity, drag, dt) {
+	function update(dt) {
 		if (!this) { console.log('this error - update'); return;}
-		//console.log('update called');
-		if (gravity || this.dx || this.dy ) {
-			this.dx *= drag; 
-			this.dy += gravity;
-			if (this.dy > TERMINAL_VELOCITY) this.dy = TERMINAL_VELOCITY;
-			this.xPos += this.dx * dt;
-			this.yPos += this.dy * dt;
-			console.log(this.yPos, this.dy, gravity);
-		}
+		this.dx *= drag; 
+		this.dy += gravity;
+		if (this.dy > TERMINAL_VELOCITY) this.dy = TERMINAL_VELOCITY;
+		this.xPos += this.dx * dt;
+		this.yPos += this.dy * dt;
+		//console.log(this.yPos, this.dy, gravity);
 	}
 
 	//returns elapsed time in seconds since last call to calcDt
@@ -90,14 +84,13 @@ document.addEventListener('DOMContentLoaded', function() {
 		this.skin(name);
 	}
 	
-	function animate(gravity, drag) {
+	function animate() {
 		var dt = viewport.getDt();
 		var dieList = [];
 		if (sprites.length){
-			//console.log(sprites.length + ' sprites.length');
-			window.requestAnimationFrame(function() {animate(gravity, drag)});
+			window.requestAnimationFrame(function() {animate()});
 			for (var i = 0; i < sprites.length; i++) {
-				sprites[i].update(gravity, drag, dt);
+				sprites[i].update(dt);
 				sprites[i].blit();
 				if (sprites[i].yPos + spriteWidth * spriteScale >= viewport.offsetHeight){
 					//console.log(sprites[i].name + ' offscreen!');
@@ -126,27 +119,24 @@ document.addEventListener('DOMContentLoaded', function() {
 		var name, up, out; //holders for the random initializers
 		var curSprite; //holder for the current Sprite
 		for (var i = 0; i < n; i++) {
-			//console.log(randRange(fruitNames.length - 1));
 			name = fruitNames[randRange(fruitNames.length - 1)];
-			up = randRange(heightPct(.9), heightPct(.7));
-			out = randRange(widthPct(.7));
+			up = -randRange(heightPct(2.5), heightPct(1.7));
+			out = randRange(widthPct(.5));
 			out *= (randRange(1)) ? 1 : -1;
-			console.log('up :' + up + ' out:' + out);
+			//console.log('up :' + up + ' out:' + out);
 			curSprite = new Sprite(name, blenderMouth[0], blenderMouth[1]);
 			curSprite.dx = out;
 			curSprite.dy = up;
 			sprites.push(curSprite);
-			//console.log(sprites[sprites.length - 1].dx);
 		}
 	}
 
 	function test() {
-		throwFruit(1);
+		throwFruit(5);
 		//start our timer
 		viewport.getDt = calcDt();
-		animate(gravity, drag);
+		animate();
 	}
 
-	//window.rand = randRange;
 	test();
 });
