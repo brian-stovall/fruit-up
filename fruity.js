@@ -18,12 +18,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	const blenderMouth = [widthPct(.48), heightPct(.55)];
 	const gravity = heightPct(.09); //additive gravity in %vh/s 
-	const drag = 1; //left-right drag coefficient, mutates dx per sec ie .75, dx loses 1/4 speed/sec
 	const spriteWidth = 32;  //the actual width of the fruit sprites											
 	const sheetSize = {'width':128, 'height':96}
 	//the scaling factor for the fruits: viewwidth*desired percentage/spriteWidth
 	const spriteScale = widthPct(.1) / spriteWidth; 
-	const TERMINAL_VELOCITY = heightPct(.75); 
+	const TERMINAL_VELOCITY = heightPct(.55); 
+	const maxThrowHeight = heightPct(2.5);
+	const maxThrowWidth = widthPct(.7);
 
 	function skinSprite(skinName) {
 		if (!this) { console.log('this error - switchSprite'); return;}
@@ -48,7 +49,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	// causes a sprite to move according to it's dx and dy
 	function update(dt) {
 		if (!this) { console.log('this error - update'); return;}
-		this.dx *= drag; 
 		this.dy += gravity;
 		if (this.dy > TERMINAL_VELOCITY) this.dy = TERMINAL_VELOCITY;
 		this.xPos += this.dx * dt;
@@ -123,8 +123,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		var curSprite; //holder for the current Sprite
 		for (var i = 0; i < n; i++) {
 			name = fruitNames[randRange(fruitNames.length - 1)];
-			up = -randRange(heightPct(2), heightPct(1.7));
-			out = randRange(widthPct(.45));
+			up = -randRange(maxThrowHeight, maxThrowHeight * .5);
+			out = randRange(maxThrowWidth);
 			out *= (randRange(1)) ? 1 : -1;
 			//console.log('up :' + up + ' out:' + out);
 			curSprite = new Sprite(name, blenderMouth[0], blenderMouth[1]);
