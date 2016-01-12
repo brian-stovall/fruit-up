@@ -86,7 +86,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	
 	function animate() {
 		var dt = viewport.getDt();
-		var dieList = [];
 		if (sprites.length){
 			window.requestAnimationFrame(function() {animate()});
 			for (var i = 0; i < sprites.length; i++) {
@@ -95,12 +94,10 @@ document.addEventListener('DOMContentLoaded', function() {
 				if (sprites[i].yPos + spriteWidth * spriteScale >= viewport.offsetHeight){
 					//console.log(sprites[i].name + ' offscreen!');
 					sprites[i].destroy();
-					dieList.push(i);
+					sprites[i].dead = true;
 				}
 			}
 		}
-		for (var n = 0; n < dieList.length; n++)
-			sprites.splice(dieList[n], 1);
 	}
 
 	//function that converts a % to px for rendering, etc
@@ -113,6 +110,12 @@ document.addEventListener('DOMContentLoaded', function() {
 		begin = (begin || 0);
 		return Math.floor(Math.random() * (end - begin + 1)) + begin;
 	}
+
+	function removeDead(arr) {
+		return arr.filter(function (entry){
+			return !entry.dead;});
+	}
+		
 
 	//throws out n random fruits within a random range
 	function throwFruit(n) {
@@ -127,15 +130,15 @@ document.addEventListener('DOMContentLoaded', function() {
 			curSprite = new Sprite(name, blenderMouth[0], blenderMouth[1]);
 			curSprite.dx = out;
 			curSprite.dy = up;
+			sprites = removeDead(sprites);
 			sprites.push(curSprite);
 		}
 	}
 
 	//makes randomized setTimeout calls to throwFruit
 	function fruitFountain() {
-		console.log(sprites.length);
 		throwFruit(randRange(5,1));
-		window.setTimeout(fruitFountain, randRange(800, 100));
+		window.setTimeout(fruitFountain, randRange(800, 200));
 	}
 
 
