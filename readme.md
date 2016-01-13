@@ -1,1 +1,1 @@
-A silly html5/css/js keep-it-up game I am writing to practice DOM sprite-based work.
+A silly html5/css/js screensaver to practice/stress test DOM sprite-based work.
